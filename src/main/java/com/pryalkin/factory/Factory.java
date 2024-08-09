@@ -3,20 +3,26 @@ package com.pryalkin.factory;
 import com.pryalkin.controller.impl.Controller;
 import com.pryalkin.repository.impl.Repository;
 import com.pryalkin.service.impl.Service;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 
 public class Factory {
 
@@ -25,12 +31,64 @@ public class Factory {
     private static List<com.pryalkin.controller.Controller> controllers = new ArrayList<>();
     private static int count = 0;
 
+    private static String ddlAuto;
+    private static Connection conn;
+
+    static {
+        String url = null;
+        String username = null;
+        String password = null;
+
+        try(InputStream in = Factory.class.getClassLoader().getResourceAsStream("app.properties")){
+            Properties properties = new Properties();
+            properties.load(in);
+            url = properties.getProperty("url");
+            username = properties.getProperty("username");
+            password = properties.getProperty("password");
+            ddlAuto = properties.getProperty("ddl-auto");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try{
+//            Class.forName("org.postgresql.Driver");
+            conn = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Factory(){
 
     }
 
+    private static void createOrDropTables() throws SQLException, FileNotFoundException {
+//        if (ddlAuto.equals("drop")){
+//            ScriptRunner sr = new ScriptRunner(conn);
+//            Reader reader = new BufferedReader(new FileReader("src/main/resources/drop_tables.sql"));
+//            sr.runScript(reader);
+//            System.out.println("Таблицы успешно удалены!");
+//        } else if (ddlAuto.equals("create")){
+//            ScriptRunner sr = new ScriptRunner(conn);
+//            Reader reader = new BufferedReader(new FileReader("src/main/resources/create_tables.sql"));
+//            sr.runScript(reader);
+//            System.out.println("Таблицы успешно созданы!");
+//        } else System.out.println("Никаких обновлений не произошло!");
+//        conn.close();
 
-    public static void init(){
+        try {
+            JdbcConnection jdbcConnection = new JdbcConnection(conn);
+            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(jdbcConnection);
+            Liquibase liquibase = new Liquibase("db/changelog/changelog.xml", new ClassLoaderResourceAccessor(), database);
+            liquibase.update();
+            System.out.println("Migration is completed successfully");
+        } catch (LiquibaseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void init() throws SQLException, FileNotFoundException {
+        createOrDropTables();
         List<Class<?>> annotatedClassesController = null;
         List<Class<?>> annotatedClassesService = null;
         List<Class<?>> annotatedClassesRepository = null;
@@ -69,7 +127,7 @@ public class Factory {
 //        }
 //    }
 
-    public com.pryalkin.service.Service getService(String className) {
+    public static com.pryalkin.service.Service getService(String className) {
         for (com.pryalkin.service.Service service : services) {
             if (service.getClass().getSimpleName().equals(className)) {
                 return service;
@@ -78,7 +136,7 @@ public class Factory {
         return null;
     }
 
-    public com.pryalkin.repository.Repository getRepository(String className) {
+    public static com.pryalkin.repository.Repository getRepository(String className) {
         for (com.pryalkin.repository.Repository repository : repositories) {
             if (repository.getClass().getSimpleName().equals(className)) {
                 return repository;
@@ -87,7 +145,7 @@ public class Factory {
         return null;
     }
 
-    public com.pryalkin.controller.Controller getController(String className) {
+    public static com.pryalkin.controller.Controller getController(String className) {
         for (com.pryalkin.controller.Controller controller : controllers) {
             if (controller.getClass().getSimpleName().equals(className)) {
                 return controller;

@@ -3,6 +3,7 @@ package com.pryalkin.handler;
 import com.pryalkin.annotation.Url;
 import com.pryalkin.controller.Controller;
 import com.pryalkin.factory.Factory;
+import com.pryalkin.service.impl.ServiceAuthImpl;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -22,8 +23,7 @@ public class Handler extends Thread {
     }};
 
     private static final List<String> AUTHORIZE_HTTP_REQUEST = new ArrayList<>() {{
-        add("/registration");
-        add("/login");
+        add("/auth");
     }};
 
     public static final String TOKEN_PREFIX = "Bearer ";
@@ -85,13 +85,13 @@ public class Handler extends Thread {
                                 }
                             }
                             // Аннализируем запрос на наличие прав доступа
-//                            if(AUTHORIZE_HTTP_REQUEST.stream().noneMatch(auth -> auth.equals(uri))){
-//                                if(Factory.getService().checkToken(authorities)) {
-//                                    var type = CONTENT_TYPES.get("json");
-//                                    this.sendHeader(output, 401, "UNAUTHORIZED", type, 0, null);
-//                                    return;
-//                                }
-//                            }
+                            if(AUTHORIZE_HTTP_REQUEST.stream().noneMatch(auth -> auth.equals(uriPathClass))){
+                                if(((ServiceAuthImpl) Objects.requireNonNull(Factory.getService("ServiceAuthImpl"))).checkToken(authorities)) {
+                                    var type = CONTENT_TYPES.get("json");
+                                    this.sendHeader(output, 401, "UNAUTHORIZED", type, 0, null);
+                                    return;
+                                }
+                            }
                             // Обработка метода POST
                             if(an.method().equals("POST") || an.method().equals("PUT")){
                                 Parameter[] parameters = m.getParameters();

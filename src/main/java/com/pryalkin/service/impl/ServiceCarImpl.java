@@ -34,7 +34,7 @@ public class ServiceCarImpl implements ServiceCar {
 
     @Override
     public Car updateCar(Car updateCar) {
-        Car car = repositoryCar.findCar(Long.parseLong(updateCar.getId()));
+        Car car = repositoryCar.findCar(Integer.parseInt(updateCar.getId()));
         if(updateCar.getBrand() != null) car.setBrand(updateCar.getBrand());
         if(updateCar.getModel() != null) car.setModel(updateCar.getModel());
         if(updateCar.getYearOfIssue() != null) car.setYearOfIssue(updateCar.getYearOfIssue());

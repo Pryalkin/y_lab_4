@@ -3,8 +3,10 @@ package com.pryalkin;
 import com.pryalkin.factory.Factory;
 import com.pryalkin.handler.Handler;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.sql.SQLException;
 
 public class Server {
 
@@ -27,8 +29,9 @@ public class Server {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, FileNotFoundException {
        Factory.init();
        new Server(8080).start();
     }
+
 }

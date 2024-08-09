@@ -35,13 +35,13 @@ public class ServiceOrderImpl implements ServiceOrder {
 
     @Override
     public Order createOrder(Order order) {
-        if(repositoryUser.findUser(Long.parseLong(order.getIdUser())) != null){
+        if(repositoryUser.findUser(Integer.parseInt(order.getIdUser())) != null){
             LoggingUsersOrder loggingUsersOrder = new LoggingUsersOrder();
             loggingUsersOrder.setUserId(order.getIdUser());
             loggingUsersOrder.setAction(Action.CREATE.name());
             loggingUsersOrder.setDate(new Date().toString());
 //            repositoryOrder.insertLoggingUsersOrder(loggingUsersOrder);
-            Car car = repositoryCar.findCar(Long.parseLong(order.getIdCar()));
+            Car car = repositoryCar.findCar(Integer.parseInt(order.getIdCar()));
             if(car != null){
                 if (repositoryCar.findCarByIdAndInStock(car.getId(), InStock.TRUE.name()) != null){
                     Car updateCar = new Car();
@@ -62,7 +62,7 @@ public class ServiceOrderImpl implements ServiceOrder {
 
     @Override
     public Map<User, List<Order>> findOrderClient(Order order) {
-        User user = repositoryUser.findUser(Long.parseLong(order.getIdUser()));
+        User user = repositoryUser.findUser(Integer.parseInt(order.getIdUser()));
         LoggingUsersOrder loggingUsersOrder = new LoggingUsersOrder();
         loggingUsersOrder.setUserId(order.getIdUser());
         loggingUsersOrder.setAction(Action.FIND_CLIENT.name());

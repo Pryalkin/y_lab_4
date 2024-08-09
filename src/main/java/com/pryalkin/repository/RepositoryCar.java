@@ -10,7 +10,7 @@ public interface RepositoryCar extends Repository{
     public Car saveCar(Car car);
     Collection<Car> findCars();
     Car deleteCar(String idCar);
-    Car findCar(Long id);
+    Car findCar(Integer id);
     Car findCarByIdAndInStock(String id, String name);
     List<Car> findCarByBrandAndModel(String brand, String model);
 }

@@ -2,15 +2,17 @@ package com.pryalkin.repository;
 
 import com.pryalkin.model.User;
 
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 public interface RepositoryUser extends Repository{
 
     User saveUser(User user);
 
-    Collection<User> findUsers();
+    List<User> findUsers();
     User findUserByUsernameAndPassword(String username, String password);
-    User findUser(Long id);
+    User findUser(Integer id);
 
 
 }

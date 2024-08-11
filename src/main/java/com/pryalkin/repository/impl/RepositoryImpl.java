@@ -4,7 +4,6 @@ import com.pryalkin.model.Car;
 import com.pryalkin.model.LoggingUsersOrder;
 import com.pryalkin.model.Order;
 import com.pryalkin.model.User;
-import com.pryalkin.repository.Repository;
 
 import java.util.Collection;
 import java.util.HashMap;

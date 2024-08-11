@@ -1,7 +1,9 @@
 package com.pryalkin.handler;
 
 import com.pryalkin.annotation.Url;
+import com.pryalkin.controller.Controller;
 import com.pryalkin.factory.Factory;
+import com.pryalkin.service.impl.ServiceAuthImpl;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -21,8 +23,7 @@ public class Handler extends Thread {
     }};
 
     private static final List<String> AUTHORIZE_HTTP_REQUEST = new ArrayList<>() {{
-        add("/registration");
-        add("/login");
+        add("/auth");
     }};
 
     public static final String TOKEN_PREFIX = "Bearer ";
@@ -47,15 +48,25 @@ public class Handler extends Thread {
             String[] parts = requestLine.split(" ");
             String method = parts[0];
             String uri = parts[1];
+            int index = uri.indexOf("/", 1);
+            String uriPathClass = uri.substring(0, index);
+            String uriPathMethod = uri.substring(uriPathClass.length());
+            System.out.println(uriPathClass);
+            System.out.println(uriPathMethod);
+
 
             // Анализируем класс Controller
-            Method[] methods = Factory.getController().getClass().getMethods();
+//            Method[] methods = Factory.getController().getClass().getMethods();
+            Controller controller = Factory.getControllers().stream()
+                    .filter(contr -> contr.getClass().getAnnotation(com.pryalkin.annotation.Controller.class).name().equals(uriPathClass)).findFirst().get();
+
+            Method[] methods = controller.getClass().getMethods();
             for (Method m: methods){
                 // Анализируем методы на наличие Аннотации Url
                 if(m.isAnnotationPresent(Url.class)){
                     Url an = m.getAnnotation(Url.class);
                     // Анализируем найденную Аннотацию Url на соответствие uri с запроса
-                    if(an.name().equals(uri)){
+                    if(an.name().equals(uriPathMethod)){
                         // Анализируем найденную Аннотацию Url на соответствие метода из CRUD с запроса
                         if(an.method().equals(method)){
                             int contentLength = 0;
@@ -74,8 +85,8 @@ public class Handler extends Thread {
                                 }
                             }
                             // Аннализируем запрос на наличие прав доступа
-                            if(AUTHORIZE_HTTP_REQUEST.stream().noneMatch(auth -> auth.equals(uri))){
-                                if(Factory.getService().checkToken(authorities)) {
+                            if(AUTHORIZE_HTTP_REQUEST.stream().noneMatch(auth -> auth.equals(uriPathClass))){
+                                if(((ServiceAuthImpl) Objects.requireNonNull(Factory.getService("ServiceAuthImpl"))).checkToken(authorities)) {
                                     var type = CONTENT_TYPES.get("json");
                                     this.sendHeader(output, 401, "UNAUTHORIZED", type, 0, null);
                                     return;
@@ -121,7 +132,7 @@ public class Handler extends Thread {
                                                 }
                                             });
                                         }
-                                        String response  = (String) m.invoke(Factory.getController(), object);
+                                        String response  = (String) m.invoke(controller, object);
                                         var type = CONTENT_TYPES.get("json");
                                         if (uri.equals(LOGIN)){
                                             this.sendHeader(output, 200, "OK", type, response.length(), response);
@@ -139,7 +150,7 @@ public class Handler extends Thread {
                                 }
                             } else if (an.method().equals("GET")){
                                 try {
-                                    String response = (String) m.invoke(Factory.getController());
+                                    String response = (String) m.invoke(controller);
                                     var type = CONTENT_TYPES.get("");
                                     this.sendHeader(output, 200, "OK", type, response.length(), null);
                                     output.write(response.getBytes());
@@ -162,7 +173,7 @@ public class Handler extends Thread {
                                     System.out.println(jsonObject);
                                     try {
                                         String str = jsonObject.get(jsonObject.keySet().stream().findFirst().get());
-                                        String response  = (String) m.invoke(Factory.getController(), str);
+                                        String response  = (String) m.invoke(controller, str);
                                         var type = CONTENT_TYPES.get("json");
                                         if (uri.equals(LOGIN)){
                                             this.sendHeader(output, 200, "OK", type, response.length(), response);

@@ -4,8 +4,7 @@ import com.pryalkin.emun.Action;
 import com.pryalkin.emun.InStock;
 import com.pryalkin.emun.Role;
 import com.pryalkin.model.*;
-import com.pryalkin.repository.Repository;
-import com.pryalkin.service.Service;
+import com.pryalkin.repository.impl.Repository;
 
 import java.io.FileWriter;
 import java.io.IOException;

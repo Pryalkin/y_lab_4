@@ -9,6 +9,7 @@
     <include file="create_users.xml" relativeToChangelogFile="true"/>
     <include file="create_cars.xml" relativeToChangelogFile="true"/>
     <include file="create_orders.xml" relativeToChangelogFile="true"/>
+    <include file="create_logging_users.xml" relativeToChangelogFile="true"/>
     <include file="insert_users.xml" relativeToChangelogFile="true"/>
     <include file="insert_cars.xml" relativeToChangelogFile="true"/>
 

@@ -84,16 +84,6 @@ public class RepositoryCarImpl implements RepositoryCar {
         Car car = new Car();
         try (PreparedStatement ps = conn.prepareStatement("DELETE FROM cars WHERE id = ?" )){
             ps.setInt(1, Integer.parseInt(idCar));
-//            ResultSet rs = ps.executeQuery();
-//            if (rs.next()){
-//                car.setId(rs.getString(1));
-//                car.setBrand(rs.getString(2));
-//                car.setModel(rs.getString(3));
-//                car.setYearOfIssue(rs.getString(4));
-//                car.setPrice(rs.getString(5));
-//                car.setState(rs.getString(6));
-//                car.setInStock(rs.getString(7));
-//            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

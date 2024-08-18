@@ -1,13 +1,11 @@
 package com.pryalkin.web.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pryalkin.annotation.Url;
-import com.pryalkin.controller.Controller;
-import com.pryalkin.controller.ResponseEntity;
 import com.pryalkin.dto.request.LoginUserRequestDTO;
-import com.pryalkin.dto.request.UserRequestDTO;
-import com.pryalkin.dto.response.UserResponseDTO;
+import com.pryalkin.dto.response.HttpResponse;
 import com.pryalkin.factory.Factory;
+import com.pryalkin.proxy.IProxy;
+import com.pryalkin.proxy.ProxyAuthService;
 import com.pryalkin.service.ServiceAuth;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,8 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
@@ -47,12 +43,19 @@ public class AuthLoginServlet extends HttpServlet {
         String requestBody = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         StringReader reader = new StringReader(requestBody);
         LoginUserRequestDTO userDTO = objectMapper.readValue(reader, LoginUserRequestDTO.class);
-        String token = serviceAuth.getAuthorization(userDTO);
-        resp.setStatus(200);
+        HttpResponse httpResponse = null;
+        IProxy<ServiceAuth, HttpResponse> iProxy = new ProxyAuthService(serviceAuth);
+        try {
+            httpResponse = iProxy.getResultMethod(null,"getAuthorization", userDTO);
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        ObjectMapper objectMap = new ObjectMapper();
+        String jsonString = objectMap.writeValueAsString(httpResponse);
+        resp.setStatus(httpResponse.getHttpStatusCode());
         resp.setContentType("application/json");
-        resp.setHeader("Authorization", "Bearer " + token);
-        resp.getWriter().write(token);
+        resp.setHeader("Authorization", "Bearer " + httpResponse.getBody().get("String"));
+        resp.getWriter().write(jsonString);
     }
 
-        public void destroy() {}
 }

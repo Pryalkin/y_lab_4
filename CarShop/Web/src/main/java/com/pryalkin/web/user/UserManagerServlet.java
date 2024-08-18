@@ -1,8 +1,11 @@
 package com.pryalkin.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pryalkin.dto.response.HttpResponse;
 import com.pryalkin.dto.response.UserResponseDTO;
 import com.pryalkin.factory.Factory;
+import com.pryalkin.proxy.IProxy;
+import com.pryalkin.proxy.ProxyUserService;
 import com.pryalkin.service.ServiceUser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -28,10 +32,16 @@ public class UserManagerServlet extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        List<UserResponseDTO> userResponseDTOs = serviceUser.getRegistrationManager();
+        HttpResponse httpResponse = null;
+        IProxy<ServiceUser, HttpResponse> iProxy = new ProxyUserService(serviceUser);
+        try {
+            httpResponse = iProxy.getResultMethod(null, "getRegistrationManager");
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
         ObjectMapper objectMap = new ObjectMapper();
-        String jsonString = objectMap.writeValueAsString(userResponseDTOs);
-        response.setStatus(200);
+        String jsonString = objectMap.writeValueAsString(httpResponse);
+        response.setStatus(httpResponse.getHttpStatusCode());
         response.setContentType("application/json");
         response.getWriter().write(jsonString);
     }

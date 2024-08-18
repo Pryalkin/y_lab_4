@@ -1,6 +1,8 @@
 package com.pryalkin.service;
 
 import com.pryalkin.dto.request.OrderRequestDTO;
+import com.pryalkin.dto.response.HttpResponse;
+import com.pryalkin.dto.response.MessageResponse;
 import com.pryalkin.dto.response.OrderResponseDTO;
 import com.pryalkin.model.Order;
 import com.pryalkin.model.User;
@@ -11,10 +13,10 @@ import java.util.Map;
 
 public interface ServiceOrder extends Service{
 
-    OrderResponseDTO createOrder(OrderRequestDTO order);
+    HttpResponse<MessageResponse> createOrder(OrderRequestDTO order);
 
-    Collection<Order> getOrders();
+    HttpResponse<List<OrderResponseDTO>>  getAllOrders() ;
 
-    Map<User, List<Order>> findOrderClient(Order order);
+    HttpResponse<List<OrderResponseDTO>> findOrderByClient(String client) ;
 
 }

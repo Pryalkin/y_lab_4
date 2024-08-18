@@ -1,9 +1,9 @@
 package com.pryalkin.model;
 
-public class LoggingUsersOrder {
+public class LoggingUser {
 
     private String id;
-    private String userId;
+    private Integer userId;
     private String action;
     private String date;
 
@@ -21,7 +21,7 @@ public class LoggingUsersOrder {
         return id;
     }
 
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
@@ -37,7 +37,7 @@ public class LoggingUsersOrder {
         this.id = id;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

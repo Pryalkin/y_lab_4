@@ -1,6 +1,5 @@
 package com.pryalkin.factory;
 
-import com.pryalkin.controller.Controller;
 import com.pryalkin.repository.Repository;
 import com.pryalkin.service.Service;
 import liquibase.Liquibase;
@@ -24,11 +23,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 public class Factory {
 
@@ -36,7 +32,6 @@ public class Factory {
 
     private static List<Service> services = new ArrayList<>();
     private static List<Repository> repositories = new ArrayList<>();
-    private static List<Controller> controllers = new ArrayList<>();
     private static int count = 0;
 
     private static String ddlAuto;
@@ -135,21 +130,19 @@ public class Factory {
         List<Class<?>> annotatedClassesService = null;
         List<Class<?>> annotatedClassesRepository = null;
         try {
-            annotatedClassesController = findAnnotatedClasses("D:\\BSUIR\\Java\\web-y-lab\\y_lab_4\\CarShop\\Web\\build\\classes\\java\\main\\com\\pryalkin\\controller\\impl", com.pryalkin.annotation.Controller.class);
-            annotatedClassesService = findAnnotatedClasses("D:\\BSUIR\\Java\\web-y-lab\\y_lab_4\\CarShop\\Web\\build\\classes\\java\\main\\com\\pryalkin\\service\\impl", com.pryalkin.annotation.Service.class);
-            annotatedClassesRepository = findAnnotatedClasses("D:\\BSUIR\\Java\\web-y-lab\\y_lab_4\\CarShop\\Web\\build\\classes\\java\\main\\com\\pryalkin\\repository\\impl", com.pryalkin.annotation.Repository.class);
+            annotatedClassesService = findAnnotatedClasses("D:\\project\\y_lab_4\\CarShop\\Web\\build\\classes\\java\\main\\com\\pryalkin\\service\\impl", com.pryalkin.annotation.Service.class);
+            annotatedClassesRepository = findAnnotatedClasses("D:\\project\\y_lab_4\\CarShop\\Web\\build\\classes\\java\\main\\com\\pryalkin\\repository\\impl", com.pryalkin.annotation.Repository.class);
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
-        count = annotatedClassesController.size() + annotatedClassesService.size() + annotatedClassesRepository.size();
+        count = annotatedClassesService.size() + annotatedClassesRepository.size();
         while (count != 0){
-            createObject(annotatedClassesController, com.pryalkin.annotation.Controller.class.getSimpleName());
             createObject(annotatedClassesService, com.pryalkin.annotation.Service.class.getSimpleName());
             createObject(annotatedClassesRepository, com.pryalkin.annotation.Repository.class.getSimpleName());
         }
     }
 
-    public com.pryalkin.service.Service getService(String className) {
+    public static com.pryalkin.service.Service getService(String className) {
         for (com.pryalkin.service.Service service : services) {
             if (service.getClass().getSimpleName().equals(className)) {
                 return service;
@@ -158,19 +151,10 @@ public class Factory {
         return null;
     }
 
-    public com.pryalkin.repository.Repository getRepository(String className) {
+    public static com.pryalkin.repository.Repository getRepository(String className) {
         for (com.pryalkin.repository.Repository repository : repositories) {
             if (repository.getClass().getSimpleName().equals(className)) {
                 return repository;
-            }
-        }
-        return null;
-    }
-
-    public static com.pryalkin.controller.Controller getController(String className) {
-        for (com.pryalkin.controller.Controller controller : controllers) {
-            if (controller.getClass().getSimpleName().equals(className)) {
-                return controller;
             }
         }
         return null;
@@ -184,9 +168,6 @@ public class Factory {
         return repositories;
     }
 
-    public static List<Controller> getControllers() {
-        return controllers;
-    }
 
     private static void createObject(List<Class<?>> annotatedClasses, String simpleName) {
         for (Class<?> annotatedClass : annotatedClasses) {
@@ -203,47 +184,6 @@ public class Factory {
             case "Repository" -> {
                 if(repositories.stream().noneMatch(repository -> annotatedClass.isAssignableFrom(repository.getClass())))
                     createRepository(annotatedClass);
-            }
-            case "Controller" -> {
-                if(controllers.stream().noneMatch(controller -> annotatedClass.isAssignableFrom(controller.getClass())))
-                    createController(annotatedClass);
-            }
-        }
-    }
-
-    private static void createController(Class<?> annotatedClass) {
-        Constructor<?>[] constructors = annotatedClass.getDeclaredConstructors();
-        for (Constructor<?> constructor : constructors) {
-            // Получаем параметры конструктора
-            Parameter[] parameters = constructor.getParameters();
-            if(parameters.length == 0){
-                try {
-                    Controller controller = (Controller) constructor.newInstance();
-                    controllers.add(controller);
-                    count--;
-                } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                int countParam = parameters.length;
-                Object[] params = new Object[countParam];
-                for (int i = 0; i < countParam; i++) {
-                    Parameter parameter = parameters[i];
-                    if(controllers.stream().anyMatch(controller -> parameter.getType().isAssignableFrom(controller.getClass()))){
-                        params[i] = controllers.stream().filter(controller -> parameter.getType().isAssignableFrom(controller.getClass())).toList().get(0);
-                    } else if(services.stream().anyMatch(service -> parameter.getType().isAssignableFrom(service.getClass()))){
-                        params[i] = services.stream().filter(service -> parameter.getType().isAssignableFrom(service.getClass())).toList().get(0);
-                    } else if(repositories.stream().anyMatch(repository -> parameter.getType().isAssignableFrom(repository.getClass()))){
-                        params[i] = repositories.stream().filter(repository -> parameter.getType().isAssignableFrom(repository.getClass())).toList().get(0);
-                    } else return;
-                }
-                try {
-                    Controller controller = (Controller) constructor.newInstance(params);
-                    controllers.add(controller);
-                    count--;
-                } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
     }
@@ -266,9 +206,7 @@ public class Factory {
                 Object[] params = new Object[countParam];
                 for (int i = 0; i < countParam; i++) {
                     Parameter parameter = parameters[i];
-                    if(controllers.stream().anyMatch(controller -> parameter.getType().isAssignableFrom(controller.getClass()))){
-                        params[i] = controllers.stream().filter(controller -> parameter.getType().isAssignableFrom(controller.getClass())).toList().get(0);
-                    } else if(services.stream().anyMatch(service -> parameter.getType().isAssignableFrom(service.getClass()))){
+                    if(services.stream().anyMatch(service -> parameter.getType().isAssignableFrom(service.getClass()))){
                         params[i] = services.stream().filter(service -> parameter.getType().isAssignableFrom(service.getClass())).toList().get(0);
                     } else if(repositories.stream().anyMatch(repository -> parameter.getType().isAssignableFrom(repository.getClass()))){
                         params[i] = repositories.stream().filter(repository -> parameter.getType().isAssignableFrom(repository.getClass())).toList().get(0);
@@ -303,9 +241,7 @@ public class Factory {
                 Object[] params = new Object[countParam];
                 for (int i = 0; i < countParam; i++) {
                     Parameter parameter = parameters[i];
-                    if(controllers.stream().anyMatch(controller -> parameter.getType().isAssignableFrom(controller.getClass()))){
-                        params[i] = controllers.stream().filter(controller -> parameter.getType().isAssignableFrom(controller.getClass())).toList().get(0);
-                    } else if(services.stream().anyMatch(service -> parameter.getType().isAssignableFrom(service.getClass()))){
+                    if(services.stream().anyMatch(service -> parameter.getType().isAssignableFrom(service.getClass()))){
                         params[i] = services.stream().filter(service -> parameter.getType().isAssignableFrom(service.getClass())).toList().get(0);
                     } else if(repositories.stream().anyMatch(repository -> parameter.getType().isAssignableFrom(repository.getClass()))){
                         params[i] = repositories.stream().filter(repository -> parameter.getType().isAssignableFrom(repository.getClass())).toList().get(0);
@@ -340,7 +276,7 @@ public class Factory {
         // Перебираем все файлы в папке
         for (File file : folder.listFiles()) {
             if (file.isFile() && file.getName().endsWith(".class")) {
-                String className = file.getName().substring(0, file.getName().length() - 6); // Убираем ".class"
+                String className = file.getName().substring(0, file.getName().length() - 6);
                 // Полное имя класса (с пакетом)
                 String classFullName = folderPath.replace(File.separatorChar, '.') + '.' + className;
                 int index = classFullName.indexOf("com.pryalkin.");
@@ -351,7 +287,7 @@ public class Factory {
             }
         }
         return classes;
-        }
+    }
 
 
 

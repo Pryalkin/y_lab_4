@@ -1,14 +1,13 @@
-package com.pryalkin.web.car;
+package com.pryalkin.web.order;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pryalkin.dto.request.NewCarRequestDTO;
-import com.pryalkin.dto.response.CarResponseDTO;
 import com.pryalkin.dto.response.HttpResponse;
 import com.pryalkin.factory.Factory;
 import com.pryalkin.proxy.IProxy;
 import com.pryalkin.proxy.ProxyCarService;
+import com.pryalkin.proxy.ProxyOrderService;
 import com.pryalkin.service.ServiceCar;
+import com.pryalkin.service.ServiceOrder;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,20 +15,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
 
-@WebServlet(name = "car_all", value = "/car/all")
-public class CarAllServlet extends HttpServlet {
+@WebServlet(name = "order_all", value = "/order/all")
+public class OrderAllServlet extends HttpServlet {
 
-    private final ServiceCar serviceCar;
+    private final ServiceOrder serviceOrder;
 
-    public CarAllServlet() {
+    public OrderAllServlet() {
         try {
-            this.serviceCar = (ServiceCar) Factory.initialization().getService("ServiceCarImpl");
+            this.serviceOrder = (ServiceOrder) Factory.initialization().getService("ServiceOrderImpl");
         } catch (SQLException | ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -40,9 +36,9 @@ public class CarAllServlet extends HttpServlet {
         String token = authorizationHeader.substring("Bearer ".length());
 
         HttpResponse httpResponse = null;
-        IProxy<ServiceCar, HttpResponse> iProxy = new ProxyCarService(serviceCar);
+        IProxy<ServiceOrder, HttpResponse> iProxy = new ProxyOrderService(serviceOrder);
         try {
-            httpResponse = iProxy.getResultMethod(token, "getCars");
+            httpResponse = iProxy.getResultMethod(token,"getOrders");
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -51,15 +47,6 @@ public class CarAllServlet extends HttpServlet {
         response.setStatus(httpResponse.getHttpStatusCode());
         response.setContentType("application/json");
         response.getWriter().write(jsonString);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-    }
-
-
-    public void destroy() {
     }
 
 }

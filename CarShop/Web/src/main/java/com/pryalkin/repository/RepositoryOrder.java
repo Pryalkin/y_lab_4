@@ -9,8 +9,8 @@ public interface RepositoryOrder extends Repository{
 
     Order saveOrder(Order order);
 
-    Collection<Order> findOrders();
+    List<Order> getAllOrders();
 
-    List<Order> findOrderByClient(String id);
+    List<Order> findOrderByUserIdRole(String role);
 
 }

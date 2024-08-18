@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Error401Servlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        HttpResponse httpRes = new HttpResponse(HttpStatus.SC_UNAUTHORIZED, "Unauthorized", "Авторизуйтесь!");
+        HttpResponse httpRes = new HttpResponse(HttpStatus.SC_UNAUTHORIZED, "Unauthorized", "Авторизуйтесь!", null);
         response.setContentType("application/json");
         response.setStatus(httpRes.getHttpStatusCode());
         ObjectMapper objectMap = new ObjectMapper();

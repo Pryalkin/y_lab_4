@@ -7,10 +7,12 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pryalkin.dto.request.UserRequestDTO;
+import com.pryalkin.dto.response.HttpResponse;
 import com.pryalkin.dto.response.UserResponseDTO;
 import com.pryalkin.factory.Factory;
+import com.pryalkin.proxy.IProxy;
 import com.pryalkin.proxy.Log;
-import com.pryalkin.proxy.Proxy;
+import com.pryalkin.proxy.ProxyAuthService;
 import com.pryalkin.service.ServiceAuth;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -39,22 +41,20 @@ public class AuthRegistrationServlet extends HttpServlet {
         String requestBody = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         StringReader reader = new StringReader(requestBody);
         UserRequestDTO userDTO = objectMapper.readValue(reader, UserRequestDTO.class);
-        UserResponseDTO userResponseDTO = null;
+        HttpResponse httpResponse = null;
+        IProxy<ServiceAuth, HttpResponse> iProxy = new ProxyAuthService(serviceAuth);
         try {
-            userResponseDTO = (UserResponseDTO) Proxy
-                    .getResultMethod(serviceAuth, new Log(),"registration", userDTO);
-        } catch (InvocationTargetException | IllegalAccessException e) {
+            httpResponse = iProxy.getResultMethod(null,"registration", userDTO);
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         ObjectMapper objectMap = new ObjectMapper();
-        String jsonString = objectMap.writeValueAsString(userResponseDTO);
-        resp.setStatus(201);
+        String jsonString = objectMap.writeValueAsString(httpResponse);
+        resp.setStatus(httpResponse.getHttpStatusCode());
         resp.setContentType("application/json");
         resp.getWriter().write(jsonString);
     }
 
 
-    public void destroy() {
-    }
 
 }

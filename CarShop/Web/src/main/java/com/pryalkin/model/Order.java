@@ -4,35 +4,26 @@ import java.util.Objects;
 
 public class Order {
 
-    private String id;
+    private Integer id;
     private String status;
-    private Integer carId;
-    private Integer userId;
+    private Car car;
+    private User user;
 
-    @Override
-    public String toString() {
-        return "{" +
-                "id:'" + id + '\'' +
-                ", status:'" + status + '\'' +
-                ", idCar:'" + carId + '\'' +
-                ", idUser:'" + userId + '\'' +
-                '}';
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Objects.equals(id, order.id) && Objects.equals(status, order.status) && Objects.equals(carId, order.carId) && Objects.equals(userId, order.userId);
+        return Objects.equals(id, order.id) && Objects.equals(status, order.status) && Objects.equals(car, order.car) && Objects.equals(user, order.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, status, carId, userId);
+        return Objects.hash(id, status, car, user);
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -40,15 +31,15 @@ public class Order {
         return status;
     }
 
-    public Integer getIdCar() {
-        return carId;
+    public Car getCar() {
+        return car;
     }
 
-    public Integer getIdUser() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -56,11 +47,11 @@ public class Order {
         this.status = status;
     }
 
-    public void setIdCar(Integer idCar) {
-        this.carId = idCar;
+    public void setCar(Car car) {
+        this.car = car;
     }
 
-    public void setIdUser(Integer idUser) {
-        this.userId = idUser;
+    public void setUser(User user) {
+        this.user= user;
     }
 }

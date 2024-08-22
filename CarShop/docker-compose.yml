@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  y_lab_db:
+    image: "postgres:16.4"
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=y_lab
+      - POSTGRES_USER=postgres
+    volumes:
+      - y_lab_db:/var/lib/postgresql/data
+    expose:
+      - 5432
+  app:
+    restart: always
+    build: ..
+    ports:
+      - "7000:8080"
+    depends_on:
+      - y_lab_db
+
+volumes:
+  y_lab_db:
+

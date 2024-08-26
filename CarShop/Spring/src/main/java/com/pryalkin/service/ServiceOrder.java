@@ -9,10 +9,10 @@ import java.util.List;
 
 public interface ServiceOrder {
 
-    HttpResponse<MessageResponse> createOrder(OrderRequestDTO order);
+    HttpResponse<MessageResponse> createOrder(OrderRequestDTO order, String token);
 
-    HttpResponse<List<OrderResponseDTO>>  getAllOrders() ;
+    HttpResponse<List<OrderResponseDTO>>  getAllOrders(String token) ;
 
-    HttpResponse<List<OrderResponseDTO>> findOrderByClient(String client) ;
+    HttpResponse<List<OrderResponseDTO>> findOrderByClient(String client, String token) ;
 
 }

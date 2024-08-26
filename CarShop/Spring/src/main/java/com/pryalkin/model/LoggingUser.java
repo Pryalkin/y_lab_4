@@ -2,22 +2,20 @@ package com.pryalkin.model;
 
 import lombok.Data;
 
+import javax.persistence.*;
+
 @Data
+@Entity
 public class LoggingUser {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     private String action;
     private String date;
 
-    @Override
-    public String toString() {
-        return "{" +
-                "id:'" + id + '\'' +
-                ", userId:'" + userId + '\'' +
-                ", action:'" + action + '\'' +
-                ", date:'" + date + '\'' +
-                '}';
-    }
 
 }

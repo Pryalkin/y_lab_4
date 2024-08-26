@@ -44,7 +44,7 @@ public class ServiceOrderImpl implements ServiceOrder {
     }
 
     @Override
-    public HttpResponse<MessageResponse> createOrder(OrderRequestDTO orderRequestDTO) {
+    public HttpResponse<MessageResponse> createOrder(OrderRequestDTO orderRequestDTO, String token) {
         User user = userDao.findById(orderRequestDTO.getUserId());
         Car car = carDao.findById(orderRequestDTO.getCarId());
         if (user != null && car != null) {
@@ -64,7 +64,7 @@ public class ServiceOrderImpl implements ServiceOrder {
     }
 
     @Override
-    public HttpResponse<List<OrderResponseDTO>> getAllOrders() {
+    public HttpResponse<List<OrderResponseDTO>> getAllOrders(String token) {
         List<OrderResponseDTO> orders = orderDao.findAll().stream().map(new OrderMapperImpl()::orderToOrderResponseDTO).toList();
         Map<String, List<OrderResponseDTO>> response = new HashMap<>();
         response.put(CarResponseDTO.class.getSimpleName(), orders);
@@ -73,7 +73,7 @@ public class ServiceOrderImpl implements ServiceOrder {
     }
 
     @Override
-    public HttpResponse<List<OrderResponseDTO>> findOrderByClient(String client) {
+    public HttpResponse<List<OrderResponseDTO>> findOrderByClient(String client, String token) {
         List<OrderResponseDTO> orders = orderDao.findAll().stream().map(new OrderMapperImpl()::orderToOrderResponseDTO).toList();
         Map<String, List<OrderResponseDTO>> response = new HashMap<>();
         response.put(OrderResponseDTO.class.getSimpleName(), orders);

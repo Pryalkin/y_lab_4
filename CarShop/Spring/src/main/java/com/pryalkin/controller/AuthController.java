@@ -24,6 +24,7 @@ public class AuthController {
 
     @PostMapping("/registration")
     public HttpResponse<UserResponseDTO> registration(@RequestBody UserRequestDTO userRequestDTO) {
+        System.out.println("Controller - registration");
         return serviceAuth.registration(userRequestDTO);
     }
 

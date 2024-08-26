@@ -1,6 +1,7 @@
 package com.pryalkin.config;
 
 import com.pryalkin.model.Car;
+import com.pryalkin.model.LoggingUser;
 import com.pryalkin.model.Order;
 import com.pryalkin.model.User;
 import org.hibernate.SessionFactory;
@@ -29,6 +30,7 @@ public class HibernateSessionFactoryUtil {
                 configuration.addAnnotatedClass(User.class);
                 configuration.addAnnotatedClass(Car.class);
                 configuration.addAnnotatedClass(Order.class);
+                configuration.addAnnotatedClass(LoggingUser.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
             } catch (Exception e) {

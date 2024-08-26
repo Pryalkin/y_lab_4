@@ -46,4 +46,5 @@ public class CarController {
     public HttpResponse<CarResponseDTO> update(@RequestBody NewCarRequestDTO newCarRequestDTO) {
         return serviceCar.addCar(newCarRequestDTO);
     }
+
 }

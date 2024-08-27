@@ -1,9 +1,20 @@
 package com.pryalkin.emun;
 
+import com.pryalkin.constant.Authority;
+
 public enum Role {
 
-    CLIENT,
-    ADMINISTRATOR,
-    MANAGER
+    ROLE_USER(Authority.USER_AUTHORITIES),
+    ROLE_MANAGER(Authority.MANAGER_AUTHORITIES),
+    ROLE_ADMIN(Authority.ADMIN_AUTHORITIES);
 
+    private String[] authorities;
+
+    Role(String... authorities) {
+        this.authorities = authorities;
+    }
+
+    public String[] getAuthorities() {
+        return authorities;
+    }
 }

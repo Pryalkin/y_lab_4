@@ -4,15 +4,17 @@ import com.pryalkin.dto.request.NewCarRequestDTO;
 import com.pryalkin.dto.response.CarResponseDTO;
 import com.pryalkin.dto.response.HttpResponse;
 import com.pryalkin.dto.response.MessageResponse;
+import com.pryalkin.exceptions.ExceptionHandling;
 import com.pryalkin.service.ServiceCar;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/car")
-public class CarController {
+public class CarController extends ExceptionHandling {
 
     private final ServiceCar serviceCar;
 

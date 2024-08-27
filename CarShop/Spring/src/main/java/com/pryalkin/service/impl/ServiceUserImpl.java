@@ -30,7 +30,7 @@ public class ServiceUserImpl implements ServiceUser {
 
     @Override
     public HttpResponse<List<UserResponseDTO>> getRegistrationClient() {
-        List<UserResponseDTO> userResponseDTOs = userDao.findByRole(Role.CLIENT.name()).get()
+        List<UserResponseDTO> userResponseDTOs = userDao.findByRole(Role.ROLE_USER.name()).get()
                 .stream().map(new UserMapperImpl()::userToUserResponseDto).toList();
         Map<String, List<UserResponseDTO>> response = new HashMap<>();
         response.put(UserResponseDTO.class.getSimpleName(), userResponseDTOs);
@@ -40,7 +40,7 @@ public class ServiceUserImpl implements ServiceUser {
 
     @Override
     public HttpResponse<List<UserResponseDTO>> getRegistrationManager() {
-        List<UserResponseDTO> userResponseDTOs = userDao.findByRole(Role.MANAGER.name()).get()
+        List<UserResponseDTO> userResponseDTOs = userDao.findByRole(Role.ROLE_MANAGER.name()).get()
                 .stream().map(new UserMapperImpl()::userToUserResponseDto).toList();
         Map<String, List<UserResponseDTO>> response = new HashMap<>();
         response.put(UserResponseDTO.class.getSimpleName(), userResponseDTOs);

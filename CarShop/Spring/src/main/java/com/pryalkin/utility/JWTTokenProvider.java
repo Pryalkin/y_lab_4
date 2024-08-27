@@ -1,14 +1,31 @@
 package com.pryalkin.utility;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.pryalkin.model.UserPrincipal;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+
+import java.util.Date;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.pryalkin.constant.SecurityConstant.*;
 
 @Component
 public class JWTTokenProvider {
-    @Value("${jwt.secret}")
-    private String secret;
+//    @Value("${jwt.secret}")
+//    private String secret;
 
     public String generateJwtToken(UserPrincipal userPrincipal){
         String[] claims = getClaimsFromUser(userPrincipal);
@@ -19,8 +36,7 @@ public class JWTTokenProvider {
                 .withSubject(userPrincipal.getUsername())
                 .withArrayClaim(AUTHORITIES, claims)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .sign(Algorithm.HMAC512(secret.getBytes()));
-        log.info(token);
+                .sign(Algorithm.HMAC512("secret".getBytes()));
         return token;
     }
 
@@ -59,7 +75,7 @@ public class JWTTokenProvider {
     private JWTVerifier getJWTVerifier() {
         JWTVerifier verifier;
         try{
-            Algorithm algorithm = Algorithm.HMAC512(secret);
+            Algorithm algorithm = Algorithm.HMAC512("secret");
             verifier = JWT.require(algorithm).withIssuer(BUG_LLC).build();
         } catch (JWTVerificationException ex){
             throw new JWTVerificationException(TOKEN_CANNOT_BE_VERIFIED);

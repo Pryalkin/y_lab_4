@@ -4,6 +4,7 @@ import com.pryalkin.dto.request.OrderRequestDTO;
 import com.pryalkin.dto.response.HttpResponse;
 import com.pryalkin.dto.response.MessageResponse;
 import com.pryalkin.dto.response.OrderResponseDTO;
+import com.pryalkin.exceptions.ExceptionHandling;
 import com.pryalkin.service.ServiceOrder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/order")
-public class OrderController {
+public class OrderController extends ExceptionHandling {
 
     private final ServiceOrder serviceOrder;
 

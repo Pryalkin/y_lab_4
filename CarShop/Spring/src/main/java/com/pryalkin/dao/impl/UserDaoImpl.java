@@ -54,6 +54,18 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        List<User> users = session.createQuery("FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", username)
+                .list();
+        tx1.commit();
+        session.close();
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
+    }
+
+    @Override
     public Optional<User> findByUsernameAndPassword(String username, String password) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();

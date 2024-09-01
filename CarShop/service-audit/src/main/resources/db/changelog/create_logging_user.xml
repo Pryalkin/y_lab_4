@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd"
+        logicalFilePath="db/changelog/changelog.xml">
+    <changeSet id="create_table_logging_user" author="pryalkinpp">
+        <createTable tableName="logging_user">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_audit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action" type="varchar(255)"/>
+            <column name="date" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="logging_user" baseColumnNames="user_audit_id" constraintName="fk_user_audit_logging_user" referencedTableName="user_audit"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

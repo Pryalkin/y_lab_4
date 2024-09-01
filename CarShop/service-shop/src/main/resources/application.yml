@@ -7,9 +7,9 @@ app:
 
 spring:
   application:
-    name: task-user
+    name: server-shop
   datasource:
-    url: jdbc:postgresql://localhost:5432/ylab_shop
+    url: jdbc:postgresql://ylab_shop_db:5432/ylab_shop
     username: postgres
     password: root
   jpa:

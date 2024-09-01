@@ -7,6 +7,7 @@ import com.pryalkin.dto.request.TokenRequestDTO;
 import com.pryalkin.dto.response.AuthServerResponseDTO;
 import com.pryalkin.dto.response.AuthorizationResponseDTO;
 import com.pryalkin.dto.response.UserResponseDTO;
+import com.pryalkin.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

@@ -1,24 +1,63 @@
 version: "3.8"
 services:
-  y_lab_db:
+  ylab_security_db:
     image: "postgres:16.4"
     restart: always
     environment:
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=y_lab
+      - POSTGRES_DB=ylab_security
       - POSTGRES_USER=postgres
     volumes:
-      - y_lab_db:/var/lib/postgresql/data
+      - ylab_security_db:/var/lib/postgresql/data
     expose:
       - 5432
-  app:
+  service-security:
     restart: always
-    build: ..
+    build: service-security
     ports:
       - "7000:8080"
     depends_on:
-      - y_lab_db
-
+      - ylab_security_db
+  ylab_shop_db:
+    image: "postgres:16.4"
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=ylab_shop
+      - POSTGRES_USER=postgres
+    volumes:
+      - ylab_shop_db:/var/lib/postgresql/data
+    expose:
+      - 5432
+  service-shop:
+    restart: always
+    build: service-shop
+    ports:
+      - "7001:8081"
+    depends_on:
+      - ylab_shop_db
+      - service-security
+  ylab_audit_db:
+    image: "postgres:16.4"
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=ylab_shop
+      - POSTGRES_USER=postgres
+    volumes:
+      - ylab_audit_db:/var/lib/postgresql/data
+    expose:
+      - 5432
+  service-audit:
+    restart: always
+    build: service-audit
+    ports:
+      - "7002:8082"
+    depends_on:
+      - ylab_audit_db
+      - service-security
 volumes:
-  y_lab_db:
+  ylab_security_db:
+  ylab_shop_db:
+  ylab_audit_db:
 

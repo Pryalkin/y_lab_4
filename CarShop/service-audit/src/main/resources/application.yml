@@ -1,0 +1,24 @@
+server:
+  port: 8082
+
+app:
+  name: server-audit
+  password: server-audit
+
+spring:
+  application:
+    name: server-audit
+  datasource:
+    url: jdbc:postgresql://ylab_audit_db:5432/ylab_audit
+    username: postgres
+    password: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+      dialect: org.hibernate.dialect.PostgreSQL95Dialect
+    generate:
+      ddl-auto: true

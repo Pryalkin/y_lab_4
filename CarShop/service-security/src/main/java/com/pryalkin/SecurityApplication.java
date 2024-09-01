@@ -1,6 +1,5 @@
 package com.pryalkin;
 
-import com.pryalkin.service.AuthService;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;

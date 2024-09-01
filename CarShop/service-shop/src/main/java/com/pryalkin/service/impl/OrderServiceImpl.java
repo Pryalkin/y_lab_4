@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserShopMapper userShopMapper;
 
     @Override
-    public OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO) throws CarDontExistException {
+    public OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO, String token) throws CarDontExistException {
         UserShop userShop = userShopDao
                 .findById(orderRequestDTO.getUserId())
                 .orElseGet(() -> {
@@ -54,14 +54,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDTO> getAllOrders() throws OrdersDontExistException {
+    public List<OrderResponseDTO> getAllOrders(String token) throws OrdersDontExistException {
         return orderDao.findAll()
                 .orElseThrow(() -> new OrdersDontExistException("Заказов нет!"))
                 .stream().map(orderMapper::orderToOrderResponseDTO).toList();
     }
 
     @Override
-    public List<OrderResponseDTO> findOrderByClient(String client) throws OrdersDontExistException {
+    public List<OrderResponseDTO> findOrderByClient(String client, String token) throws OrdersDontExistException {
         return orderDao.findByUserRole(client)
                 .orElseThrow(() -> new OrdersDontExistException("Заказов от клиентов нет!"))
                 .stream().map(orderMapper::orderToOrderResponseDTO).toList();

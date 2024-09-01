@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd"
+        logicalFilePath="db/changelog/changelog.xml">
+    <changeSet id="create_table_server" author="pryalkinpp">
+        <createTable tableName="servers">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="servername" type="varchar(255)"/>
+            <column name="serverpassword" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

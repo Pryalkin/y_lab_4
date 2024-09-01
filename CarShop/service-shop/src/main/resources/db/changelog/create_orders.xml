@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd"
+        logicalFilePath="db/changelog/changelog.xml">
+    <changeSet id="create_table_orders" author="pryalkinpp">
+        <createTable tableName="orders">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="status" type="varchar(255)"/>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="orders" baseColumnNames="user_id" constraintName="fk_user_shop_orders" referencedTableName="user_shop"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="orders" baseColumnNames="car_id" constraintName="fk_cars_orders" referencedTableName="cars"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

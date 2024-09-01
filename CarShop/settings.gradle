@@ -1,4 +1,5 @@
 rootProject.name = 'CarShop'
-include 'Server'
-include 'Web'
+include 'service-security'
+include 'service-audit'
+include 'service-shop'
 
